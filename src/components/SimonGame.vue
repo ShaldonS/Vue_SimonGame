@@ -91,13 +91,41 @@ export default {
                 this.rightBottomActive=false;
                 break;
             }
-          }, 1000*this.delay)
+          }, 400)
 
           await timer(1000*this.delay);
       }
     },
-    checkAnswer(btnNum) {
-      //alert(this.lastAnswerPos)
+    async checkAnswer(btnNum) {
+      switch(btnNum) {
+        case 0:
+          this.leftTopActive=true;
+          break;
+        case 1:
+          this.rightTopActive=true;
+          break;
+        case 2:
+          this.leftBottomActive=true;
+          break;
+        case 3:
+          this.rightBottomActive=true;
+          break;
+      }
+      await timer(400);
+      switch(btnNum) {
+        case 0:
+          this.leftTopActive=false;
+          break;
+        case 1:
+          this.rightTopActive=false;
+          break;
+        case 2:
+          this.leftBottomActive=false;
+          break;
+        case 3:
+          this.rightBottomActive=false;
+          break;
+      }
       if(btnNum==this.answer[this.lastAnswerPos]) {
         if(++this.lastAnswerPos == this.answer.length)
           this.nextStep();

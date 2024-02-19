@@ -15,7 +15,12 @@
         <button @click="checkAnswer(3)" id="left-bottom-btn" :class="{'active': rightBottomActive ? '.active' : ''}"></button>
       </div>
       <div class="innerCircle circle">
-        <button id="start-btn" @click="startGame()">{{startBtnMsg}}</button>
+        <button id="start-btn" 
+        @click="startGame()" 
+        :class="{'disabled': gameStarted ? '.disabled' : ''}"
+        >
+          {{startBtnMsg}}
+        </button>
       </div>
     </div>
   </div>
@@ -43,15 +48,16 @@ export default {
   methods: {
     startGame() {
       this.startBtnMsg='Начать'
-      this.gameStarted=!this.gameStarted;
+      this.gameStarted=true;
       this.count=0;
-      this.delay=1.5;
+      //this.delay=1.5;
       this.answer=[];
       this.lastAnswerPos=0;
 
       this.nextStep();
     },
     async nextStep() {
+      await timer(500);
       this.count++;
       let cnt = this.count;
       this.startBtnMsg=cnt;
@@ -61,8 +67,28 @@ export default {
       for(let i=0; i<cnt; ++i) {
           let randNum =  Math.floor(Math.random() * 4);
           this.answer.push(randNum);
+          this.doBlink(randNum);
 
-          switch(randNum) {
+          await timer(1000*this.delay);
+      }
+    },
+    async checkAnswer(btnNum) {
+      if(!this.gameStarted) 
+        return
+      this.doBlink(btnNum);
+      if(btnNum==this.answer[this.lastAnswerPos]) {
+        if(++this.lastAnswerPos == this.answer.length)
+          this.nextStep();
+      }
+      else {
+        alert("Вы проиграли");
+        this.startBtnMsg='Начать';
+        this.gameStarted=false;
+      }
+    },
+    doBlink(btnNum) {
+      this.playAudio(btnNum);
+      switch(btnNum) {
             case 0:
               this.leftTopActive=true;
               break;
@@ -77,7 +103,7 @@ export default {
               break;
           }
           setTimeout(() => {
-            switch(randNum) {
+            switch(btnNum) {
               case 0:
                 this.leftTopActive=false;
                 break;
@@ -92,47 +118,16 @@ export default {
                 break;
             }
           }, 400)
-
-          await timer(1000*this.delay);
-      }
     },
-    async checkAnswer(btnNum) {
-      switch(btnNum) {
-        case 0:
-          this.leftTopActive=true;
-          break;
-        case 1:
-          this.rightTopActive=true;
-          break;
-        case 2:
-          this.leftBottomActive=true;
-          break;
-        case 3:
-          this.rightBottomActive=true;
-          break;
-      }
-      await timer(400);
-      switch(btnNum) {
-        case 0:
-          this.leftTopActive=false;
-          break;
-        case 1:
-          this.rightTopActive=false;
-          break;
-        case 2:
-          this.leftBottomActive=false;
-          break;
-        case 3:
-          this.rightBottomActive=false;
-          break;
-      }
-      if(btnNum==this.answer[this.lastAnswerPos]) {
-        if(++this.lastAnswerPos == this.answer.length)
-          this.nextStep();
-      }
-      else {
-        alert("Вы проиграли");
-        this.startBtnMsg='Начать';
+    async playAudio(btnNum) {
+      var audio = new Audio(`http://www.kellyking.me/projects/simon/sounds/${btnNum+1}.ogg`);  
+      audio.type = 'audio/wav';
+
+      try {
+        await audio.play();
+        //console.log('Playing...');
+      } catch (err) {
+        //console.log('Failed to play...' + err);
       }
     },
     onChangeLevel(event) {
@@ -220,5 +215,8 @@ export default {
 }
 .active {
   opacity: 1 !important;
+}
+.disabled {
+  pointer-events: none;
 }
 </style>

@@ -120,14 +120,13 @@ export default {
           }, 400)
     },
     async playAudio(btnNum) {
-      var audio = new Audio(`http://www.kellyking.me/projects/simon/sounds/${btnNum+1}.ogg`);  
-      audio.type = 'audio/wav';
+      var audio = new Audio(require(`../../public/audio/${btnNum+1}.ogg`));
+      audio.type = 'audio/ogg';
 
       try {
         await audio.play();
-        //console.log('Playing...');
       } catch (err) {
-        //console.log('Failed to play...' + err);
+        console.log('Failed to play...' + err);
       }
     },
     onChangeLevel(event) {

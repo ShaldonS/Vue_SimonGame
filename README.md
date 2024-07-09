@@ -1,4 +1,5 @@
-# game
+# Simon game
+[LIVE DEMO](https://shaldons.github.io/Vue_Simon_Game/)
 
 ## Project setup
 ```
@@ -19,6 +20,3 @@ npm run build
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
